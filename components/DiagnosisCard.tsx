@@ -23,6 +23,7 @@ export default function DiagnosisCard({
         <p className="font-mono text-sm text-foreground/60">Your diagnosis</p>
         <h2 className="text-2xl font-semibold">{primary.title}</h2>
       </div>
+      {diagnosis.reasoning && <p className="leading-7">{diagnosis.reasoning}</p>}
       <dl className="flex flex-col gap-4 leading-7">
         <div>
           <dt className="text-sm font-medium text-foreground/60">

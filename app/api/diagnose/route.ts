@@ -1,3 +1,48 @@
-export async function POST() {
-  return Response.json({ error: "Not implemented" }, { status: 501 });
+import { getConcept } from "@/lib/learning/concepts";
+import { evidenceFor, getQuestionsForConcept } from "@/lib/learning/diagnostic";
+import {
+  getMisconception,
+  getMisconceptionsForConcept,
+} from "@/lib/learning/misconceptions";
+import type { Diagnosis, Misconception } from "@/lib/learning/types";
+import { generateStructured, llmErrorResponse, parseBody } from "@/lib/llm/client";
+import { diagnosisPrompt } from "@/lib/llm/prompts";
+import { diagnoseRequestSchema, diagnosisOutputSchema } from "@/lib/llm/schemas";
+
+export async function POST(request: Request) {
+  const body = await parseBody(request, diagnoseRequestSchema);
+  if (!body.ok) return body.response;
+  const { conceptId, answers, explanation } = body.data;
+
+  const concept = getConcept(conceptId);
+  const misconceptions = getMisconceptionsForConcept(conceptId);
+  if (!concept || misconceptions.length === 0 || getQuestionsForConcept(conceptId).length === 0) {
+    return Response.json({ error: "Unknown concept" }, { status: 404 });
+  }
+
+  try {
+    const result = await generateStructured({
+      ...diagnosisPrompt({ concept, misconceptions, answers, explanation }),
+      schema: diagnosisOutputSchema(misconceptions.map((m) => m.id)),
+    });
+
+    const primary = result.primaryMisconceptionId
+      ? getMisconception(result.primaryMisconceptionId)
+      : undefined;
+    if (!primary) return Response.json({ diagnosis: null });
+
+    const diagnosis: Diagnosis = {
+      conceptId,
+      primary,
+      secondary: result.secondaryMisconceptionIds
+        .filter((id) => id !== primary.id)
+        .map(getMisconception)
+        .filter((m): m is Misconception => m !== undefined),
+      evidence: evidenceFor(conceptId, answers, primary.id),
+      reasoning: result.reasoning,
+    };
+    return Response.json({ diagnosis });
+  } catch (error) {
+    return llmErrorResponse(error);
+  }
 }

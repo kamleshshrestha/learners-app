@@ -8,9 +8,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Learning Debugger — a web app that helps beginner machine-learning learners identify *specifically* what they misunderstand about a concept, rather than giving them another generic explanation.
 
-Currently a folder scaffold on top of `create-next-app`: the structure below exists as typed placeholder files (components render `null`, `lib` files are `export {};`, API routes return 501). No product features or data models are implemented yet, and `app/page.tsx` is still the default starter page.
+The core learner flow is implemented end to end for one concept (gradient descent); the other concepts show a "coming soon" state. There is no test runner yet.
 
-Intended learner flow: select concept → diagnostic questions → diagnosis of the specific misconception → targeted explanation → verification question.
+Learner flow: pick a concept (`/`) → 4 multiple-choice diagnostic questions → explain the concept in your own words (free text) → LLM diagnosis of the specific misconception → targeted explanation → LLM-graded verification question.
 
 ## Commands
 
@@ -34,15 +34,17 @@ app/
 ├── page.tsx                 landing + concept selection
 ├── learn/page.tsx           the learning session flow
 └── api/
-    ├── diagnose/route.ts    learner answers → misconception diagnosis
-    ├── explain/route.ts     diagnosis → targeted explanation
-    └── verify/route.ts      check that the gap is closed
-components/                  presentational UI: ConceptSelector, DiagnosticQuestion, AnswerInput,
-                             DiagnosisCard, ExplanationCard, VerificationQuestion, SessionProgress
+    ├── diagnose/route.ts    MCQ answers + free-text explanation → misconception diagnosis
+    ├── explain/route.ts     diagnosis → targeted explanation + verification question
+    └── verify/route.ts      grades the verification answer
+components/                  UI: ConceptSelector, LearningSession (stage switcher), SessionProgress,
+                             DiagnosticQuestion, AnswerInput (radio), FreeTextAnswer (textarea),
+                             DiagnosisCard, ExplanationCard, VerificationQuestion
 hooks/
-└── useLearningSession.ts    client-side session state
+└── useLearningSession.ts    client-side session state + calls to the API routes
 lib/
-├── llm/                     client.ts (LLM client), prompts.ts, schemas.ts (structured-output schemas)
+├── llm/                     client.ts (OpenRouter client, generateStructured, request helpers),
+│                            prompts.ts, schemas.ts (zod request + structured-output schemas)
 └── learning/                domain logic, no React/LLM dependencies:
                              concepts.ts, misconceptions.ts, diagnostic.ts,
                              session.ts (pure stage transitions), types.ts
@@ -50,9 +52,10 @@ tests/                       mirrors lib/ and components/ (no test runner config
 ```
 
 Conventions:
-- LLM calls happen only in `app/api/*` route handlers via `lib/llm/`; components and hooks call the API routes and never import `lib/llm/` (keeps the API key server-side).
+- LLM calls happen only in `app/api/*` route handlers via `lib/llm/`; components and hooks call the API routes and never import `lib/llm/` (keeps the API key server-side). Types shared with the client live in `lib/learning/types.ts`.
+- LLM calls go to OpenRouter's chat-completions API via `fetch` (no SDK). The model is `OPENROUTER_MODEL` from the environment, defaulting to the free `qwen/qwen3.8-27b:free` (constant `MODEL` in `lib/llm/client.ts`). Free models are often rate limited or overloaded and take ~10-15s per call. Outputs are requested as JSON schema (from the zod schemas), then validated with zod and retried once on invalid output. Learner free text is untrusted: prompts wrap it in `<learner_...>` tags, and routes validate ids against the catalog server-side rather than trusting client-supplied misconception text.
 - `lib/learning/` stays pure (no React, no LLM) so it is easy to unit test; shared types live in `lib/learning/types.ts`.
-- Secrets go in `.env.local` (gitignored via `.env*`); it is not created yet and will need the LLM API key.
+- Secrets go in `.env.local` (gitignored via `.env*`). It must contain `OPENROUTER_API_KEY` and may set `OPENROUTER_MODEL`; restart `pnpm dev` after changing it. Without a key the API routes return a 500 "AI service is not configured" error. There is no auth or rate limiting on the API routes yet.
 
 ### Framework notes
 

@@ -41,10 +41,30 @@ export type Diagnosis = {
   secondary: Misconception[];
   /** Ids of the questions whose answers revealed `primary`. */
   evidence: string[];
+  /** Short explanation, addressed to the learner, of why this was chosen. */
+  reasoning?: string;
+};
+
+export type Explanation = {
+  /** Targeted explanation aimed at the diagnosed misconception. */
+  explanation: string;
+  /** A small concrete example that makes the correction tangible. */
+  example: string;
+  takeaway: string;
+  /** A new scenario that tests whether the misconception is gone. */
+  verificationQuestion: string;
+};
+
+export type VerificationVerdict = "resolved" | "partial" | "unresolved";
+
+export type VerificationResult = {
+  verdict: VerificationVerdict;
+  feedback: string;
 };
 
 export type SessionStage =
   | "diagnostic"
+  | "explain-back"
   | "diagnosis"
   | "explanation"
   | "verification"
