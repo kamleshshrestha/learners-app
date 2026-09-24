@@ -150,3 +150,19 @@ export function diagnose(
     evidence: top.evidence,
   };
 }
+
+/** Ids of the questions whose selected option revealed `misconceptionId`. */
+export function evidenceFor(
+  conceptId: string,
+  answers: DiagnosticAnswers,
+  misconceptionId: string,
+): string[] {
+  return getQuestionsForConcept(conceptId)
+    .filter((q) =>
+      q.options.some(
+        (o) =>
+          o.id === answers[q.id] && o.misconceptionId === misconceptionId,
+      ),
+    )
+    .map((q) => q.id);
+}

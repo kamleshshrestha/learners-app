@@ -17,7 +17,7 @@ export function initialSession(): SessionState {
 
 /**
  * Records the answer to the current question and advances. Answering the
- * last question moves the session on to the diagnosis stage.
+ * last question moves the session on to the explain-back stage.
  */
 export function submitAnswer(
   state: SessionState,
@@ -31,6 +31,10 @@ export function submitAnswer(
   const isLast = state.currentIndex >= questions.length - 1;
 
   return isLast
-    ? { stage: "diagnosis", currentIndex: state.currentIndex, answers }
+    ? { stage: "explain-back", currentIndex: state.currentIndex, answers }
     : { stage: "diagnostic", currentIndex: state.currentIndex + 1, answers };
+}
+
+export function goToStage(state: SessionState, stage: SessionStage): SessionState {
+  return { ...state, stage };
 }
