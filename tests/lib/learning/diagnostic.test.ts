@@ -63,6 +63,28 @@ describe("catalog integrity", () => {
     }
   });
 
+  it("does not always put the correct answer in the same position within a concept", () => {
+    // Otherwise a learner can guess "always pick the third option" and pass.
+    for (const c of concepts) {
+      const positions = getQuestionsForConcept(c.id).map((q) =>
+        q.options.findIndex((o) => o.correct),
+      );
+      if (positions.length < 2) continue;
+      expect(new Set(positions).size, c.id).toBeGreaterThan(1);
+    }
+  });
+
+  it("gives every concept either both questions and misconceptions or neither", () => {
+    // /learn shows "coming soon" without questions and /api/diagnose 404s
+    // without misconceptions, so a half-finished concept would break the flow.
+    for (const c of concepts) {
+      expect(
+        getQuestionsForConcept(c.id).length > 0,
+        c.id,
+      ).toBe(getMisconceptionsForConcept(c.id).length > 0);
+    }
+  });
+
   it("has a question that can reveal each misconception", () => {
     for (const m of misconceptions) {
       expect(
@@ -176,5 +198,48 @@ describe("evidenceFor", () => {
   it("returns nothing for unanswered or correct questions", () => {
     expect(evidenceFor(CONCEPT, {}, "gd-one-step")).toEqual([]);
     expect(evidenceFor(CONCEPT, allCorrect(), "gd-one-step")).toEqual([]);
+  });
+});
+
+describe("backpropagation content", () => {
+  const bpQuestions = getQuestionsForConcept("backpropagation");
+  const pick = (questionId: string, misconceptionId: string) =>
+    bpQuestions.find((q) => q.id === questionId)!.options.find(
+      (o) => o.misconceptionId === misconceptionId,
+    )!.id;
+  const correct = () =>
+    Object.fromEntries(
+      bpQuestions.map((q) => [q.id, q.options.find((o) => o.correct)!.id]),
+    );
+
+  it("has four questions covering four misconceptions", () => {
+    expect(bpQuestions).toHaveLength(4);
+    expect(getMisconceptionsForConcept("backpropagation")).toHaveLength(4);
+  });
+
+  it("diagnoses nothing when every answer is correct", () => {
+    expect(diagnose("backpropagation", correct())).toBeNull();
+  });
+
+  it("diagnoses the misconception revealed by two questions over single-hit ones", () => {
+    const answers = {
+      ...correct(),
+      "bp-q1-what-it-computes": pick("bp-q1-what-it-computes", "bp-updates-weights"),
+      "bp-q2-who-updates": pick("bp-q2-who-updates", "bp-updates-weights"),
+      "bp-q3-which-layers": pick("bp-q3-which-layers", "bp-last-layer-only"),
+    };
+    const diagnosis = diagnose("backpropagation", answers)!;
+    expect(diagnosis.primary.id).toBe("bp-updates-weights");
+    expect(diagnosis.evidence).toEqual(["bp-q1-what-it-computes", "bp-q2-who-updates"]);
+    expect(diagnosis.secondary.map((m) => m.id)).toEqual(["bp-last-layer-only"]);
+  });
+
+  it.each([
+    ["bp-q3-which-layers", "bp-last-layer-only"],
+    ["bp-q3-which-layers", "bp-same-blame"],
+    ["bp-q4-cost", "bp-per-weight-rerun"],
+  ])("a wrong answer on %s reveals %s", (questionId, misconceptionId) => {
+    const answers = { ...correct(), [questionId]: pick(questionId, misconceptionId) };
+    expect(diagnose("backpropagation", answers)?.primary.id).toBe(misconceptionId);
   });
 });
