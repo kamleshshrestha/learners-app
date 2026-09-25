@@ -296,6 +296,102 @@ export const diagnosticQuestions: DiagnosticQuestion[] = [
       },
     ],
   },
+  {
+    id: "tts-q1-why-holdout",
+    conceptId: "train-test-split",
+    prompt: "Why do we evaluate a model on data it was not trained on?",
+    options: [
+      {
+        id: "a",
+        text: "We don't really need to: the training score already shows how good the model is, and holding data back only wastes it.",
+        correct: false,
+        misconceptionId: "tts-waste-of-data",
+      },
+      {
+        id: "b",
+        text: "Performance on data the model has never seen estimates how it will do on new data in real use.",
+        correct: true,
+      },
+      {
+        id: "c",
+        text: "Training finishes faster when the model sees less data, which saves compute.",
+        correct: false,
+      },
+    ],
+  },
+  {
+    id: "tts-q2-tuning",
+    conceptId: "train-test-split",
+    prompt:
+      "You try 20 hyperparameter settings, keep the one with the best score on the test set, and report that score as the model's expected performance. What is wrong with this?",
+    options: [
+      {
+        id: "a",
+        text: "Nothing: the test set was never used to train the weights, so the score is an honest estimate of real performance.",
+        correct: false,
+        misconceptionId: "tts-tune-on-test",
+      },
+      {
+        id: "b",
+        text: "The model would have scored higher if it had also been trained on the test data, so holding it back was a mistake.",
+        correct: false,
+        misconceptionId: "tts-waste-of-data",
+      },
+      {
+        id: "c",
+        text: "Picking the best of 20 by test score lets the test set influence the result; tune on a separate validation set instead.",
+        correct: true,
+      },
+    ],
+  },
+  {
+    id: "tts-q3-scaling",
+    conceptId: "train-test-split",
+    prompt:
+      "Before splitting, you standardize every feature using the mean and standard deviation of the whole dataset, then split into train and test sets. Is that a problem?",
+    options: [
+      {
+        id: "a",
+        text: "Yes: the test rows helped set the mean and standard deviation, which leaks information; fit it on the training set only.",
+        correct: true,
+      },
+      {
+        id: "b",
+        text: "No: scaling only changes units, so it cannot affect the evaluation, as long as the split happens before training.",
+        correct: false,
+        misconceptionId: "tts-preprocess-before-split",
+      },
+      {
+        id: "c",
+        text: "Yes, because features should never be standardized when the model will be trained on the result.",
+        correct: false,
+      },
+    ],
+  },
+  {
+    id: "tts-q4-time-order",
+    conceptId: "train-test-split",
+    prompt:
+      "You want to predict next month's sales from three years of monthly records. You shuffle all the rows, use 80% for training and 20% for testing, and get a great test score. What should you conclude?",
+    options: [
+      {
+        id: "a",
+        text: "It is a trustworthy estimate, because a random split is always the fairest way to build a test set, whatever the data.",
+        correct: false,
+        misconceptionId: "tts-random-always-fine",
+      },
+      {
+        id: "b",
+        text: "The shuffle lets the model train on months after the ones it is tested on, which leaks the future; split by time.",
+        correct: true,
+      },
+      {
+        id: "c",
+        text: "The test set is too small; a test set should be at least half of the data so the estimate is stable.",
+        correct: false,
+      },
+    ],
+  },
 ];
 
 export function getQuestionsForConcept(
