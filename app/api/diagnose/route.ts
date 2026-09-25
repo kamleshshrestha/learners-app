@@ -6,10 +6,14 @@ import {
 } from "@/lib/learning/misconceptions";
 import type { Diagnosis, Misconception } from "@/lib/learning/types";
 import { generateStructured, llmErrorResponse, parseBody } from "@/lib/llm/client";
+import { checkRateLimit } from "@/lib/llm/rate-limit";
 import { diagnosisPrompt } from "@/lib/llm/prompts";
 import { diagnoseRequestSchema, diagnosisOutputSchema } from "@/lib/llm/schemas";
 
 export async function POST(request: Request) {
+  const limited = checkRateLimit(request);
+  if (limited) return limited;
+
   const body = await parseBody(request, diagnoseRequestSchema);
   if (!body.ok) return body.response;
   const { conceptId, answers, explanation } = body.data;
