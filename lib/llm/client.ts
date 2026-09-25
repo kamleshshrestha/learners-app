@@ -83,6 +83,39 @@ async function chat(
   return content;
 }
 
+/** Extra tries after a transient provider failure, with a growing delay. */
+const MAX_TRANSIENT_RETRIES = 2;
+const RETRY_BASE_DELAY_MS = 1_500;
+const TRANSIENT_STATUSES = new Set([429, 500, 502, 503, 504, 529]);
+
+function isTransient(error: unknown): boolean {
+  if (error instanceof LLMHttpError) return TRANSIENT_STATUSES.has(error.status);
+  // fetch rejects with a TypeError on network failure; timeouts are not retried.
+  return error instanceof TypeError;
+}
+
+/** `chat`, retried on overload / rate limit / network errors (not on timeouts or auth). */
+async function chatWithRetry(
+  messages: ChatMessage[],
+  jsonSchema: unknown,
+  maxTokens: number,
+): Promise<string> {
+  for (let retry = 0; ; retry++) {
+    try {
+      return await chat(messages, jsonSchema, maxTokens);
+    } catch (error) {
+      if (retry >= MAX_TRANSIENT_RETRIES || !isTransient(error)) throw error;
+      console.warn(
+        `[llm] transient failure, retrying (${retry + 1}/${MAX_TRANSIENT_RETRIES}):`,
+        error instanceof Error ? error.message : error,
+      );
+      await new Promise((resolve) =>
+        setTimeout(resolve, RETRY_BASE_DELAY_MS * 2 ** retry),
+      );
+    }
+  }
+}
+
 /** Models sometimes wrap JSON in a markdown fence despite instructions. */
 function extractJson(text: string): string {
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
@@ -113,7 +146,7 @@ export async function generateStructured<S extends z.ZodType>({
 
   let lastProblem = "";
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-    const text = await chat(messages, jsonSchema, maxTokens);
+    const text = await chatWithRetry(messages, jsonSchema, maxTokens);
 
     let problem: string;
     try {
