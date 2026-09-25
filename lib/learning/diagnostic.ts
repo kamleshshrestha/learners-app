@@ -207,18 +207,18 @@ export const diagnosticQuestions: DiagnosticQuestion[] = [
     options: [
       {
         id: "a",
-        text: "It is a strong model, and the lower score on new data is just noise.",
+        text: "It is a strong model, and the drop on new data is probably just random noise in the test set.",
         correct: false,
         misconceptionId: "of-train-accuracy-proves",
       },
       {
         id: "b",
-        text: "It has memorized details specific to the training data instead of learning patterns that generalize.",
+        text: "It has memorized details of the training data instead of learning patterns that generalize.",
         correct: true,
       },
       {
         id: "c",
-        text: "It has not been trained for long enough yet.",
+        text: "It has not been trained for long enough yet, so more training should close the gap.",
         correct: false,
         misconceptionId: "of-confused-with-underfit",
       },
@@ -237,13 +237,13 @@ export const diagnosticQuestions: DiagnosticQuestion[] = [
       },
       {
         id: "b",
-        text: "Better performance, because a more complex model can capture the pattern more precisely.",
+        text: "Better performance, because a model with more parameters can capture the underlying pattern more precisely.",
         correct: false,
         misconceptionId: "of-more-complexity-always-better",
       },
       {
         id: "c",
-        text: "The same performance, because new data comes from the same source.",
+        text: "The same performance, because new data comes from the same source as the training data.",
         correct: false,
       },
     ],
@@ -256,13 +256,13 @@ export const diagnosticQuestions: DiagnosticQuestion[] = [
     options: [
       {
         id: "a",
-        text: "Keep training, because the validation loss will come back down once the model has learned enough.",
+        text: "Keep training, because the validation loss will come back down once the model has learned enough about the data.",
         correct: false,
         misconceptionId: "of-confused-with-underfit",
       },
       {
         id: "b",
-        text: "Trust the training loss, because that is the data the model actually learns from.",
+        text: "Trust the training loss, because that is the data the model actually learns from, not the validation set.",
         correct: false,
         misconceptionId: "of-train-accuracy-proves",
       },
@@ -280,18 +280,18 @@ export const diagnosticQuestions: DiagnosticQuestion[] = [
     options: [
       {
         id: "a",
-        text: "Overfitting, because test accuracy is lower than training accuracy.",
+        text: "Overfitting, because the model scores lower on the test data than on the training data.",
         correct: false,
         misconceptionId: "of-any-gap-is-overfit",
       },
       {
         id: "b",
-        text: "Healthy generalization; a small gap between training and test scores is normal.",
+        text: "Healthy generalization; a small gap between training and test scores is completely normal.",
         correct: true,
       },
       {
         id: "c",
-        text: "Underfitting, because neither score is 100%.",
+        text: "Underfitting, because neither the training score nor the test score is 100%.",
         correct: false,
       },
     ],
