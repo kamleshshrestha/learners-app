@@ -243,3 +243,57 @@ describe("backpropagation content", () => {
     expect(diagnose("backpropagation", answers)?.primary.id).toBe(misconceptionId);
   });
 });
+
+describe("overfitting content", () => {
+  const ofQuestions = getQuestionsForConcept("overfitting");
+  const pick = (questionId: string, misconceptionId: string) =>
+    ofQuestions
+      .find((q) => q.id === questionId)!
+      .options.find((o) => o.misconceptionId === misconceptionId)!.id;
+  const correct = () =>
+    Object.fromEntries(
+      ofQuestions.map((q) => [q.id, q.options.find((o) => o.correct)!.id]),
+    );
+
+  it("has four questions covering four misconceptions", () => {
+    expect(ofQuestions).toHaveLength(4);
+    expect(getMisconceptionsForConcept("overfitting")).toHaveLength(4);
+  });
+
+  it("diagnoses nothing when every answer is correct", () => {
+    expect(diagnose("overfitting", correct())).toBeNull();
+  });
+
+  it("ranks a misconception revealed twice above single-hit ones", () => {
+    const answers = {
+      ...correct(),
+      "of-q1-train-vs-test": pick("of-q1-train-vs-test", "of-train-accuracy-proves"),
+      "of-q3-validation-rising": pick("of-q3-validation-rising", "of-train-accuracy-proves"),
+      "of-q4-small-gap": pick("of-q4-small-gap", "of-any-gap-is-overfit"),
+    };
+    const diagnosis = diagnose("overfitting", answers)!;
+    expect(diagnosis.primary.id).toBe("of-train-accuracy-proves");
+    expect(diagnosis.evidence).toEqual(["of-q1-train-vs-test", "of-q3-validation-rising"]);
+    expect(diagnosis.secondary.map((m) => m.id)).toEqual(["of-any-gap-is-overfit"]);
+  });
+
+  it("finds the underfitting confusion when it is the repeated mistake", () => {
+    const answers = {
+      ...correct(),
+      "of-q1-train-vs-test": pick("of-q1-train-vs-test", "of-confused-with-underfit"),
+      "of-q3-validation-rising": pick("of-q3-validation-rising", "of-confused-with-underfit"),
+      "of-q2-complexity": pick("of-q2-complexity", "of-more-complexity-always-better"),
+    };
+    const diagnosis = diagnose("overfitting", answers)!;
+    expect(diagnosis.primary.id).toBe("of-confused-with-underfit");
+    expect(diagnosis.secondary.map((m) => m.id)).toEqual(["of-more-complexity-always-better"]);
+  });
+
+  it.each([
+    ["of-q2-complexity", "of-more-complexity-always-better"],
+    ["of-q4-small-gap", "of-any-gap-is-overfit"],
+  ])("a wrong answer on %s reveals %s", (questionId, misconceptionId) => {
+    const answers = { ...correct(), [questionId]: pick(questionId, misconceptionId) };
+    expect(diagnose("overfitting", answers)?.primary.id).toBe(misconceptionId);
+  });
+});

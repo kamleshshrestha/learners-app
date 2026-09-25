@@ -199,6 +199,103 @@ export const diagnosticQuestions: DiagnosticQuestion[] = [
       },
     ],
   },
+  {
+    id: "of-q1-train-vs-test",
+    conceptId: "overfitting",
+    prompt:
+      "A model gets 99% accuracy on its training data but only 70% on new data. What does this most likely mean?",
+    options: [
+      {
+        id: "a",
+        text: "It is a strong model, and the lower score on new data is just noise.",
+        correct: false,
+        misconceptionId: "of-train-accuracy-proves",
+      },
+      {
+        id: "b",
+        text: "It has memorized details specific to the training data instead of learning patterns that generalize.",
+        correct: true,
+      },
+      {
+        id: "c",
+        text: "It has not been trained for long enough yet.",
+        correct: false,
+        misconceptionId: "of-confused-with-underfit",
+      },
+    ],
+  },
+  {
+    id: "of-q2-complexity",
+    conceptId: "overfitting",
+    prompt:
+      "You have a small dataset. You swap a simple model for one with 100 times more parameters, and its training error drops to zero. What should you expect on new data?",
+    options: [
+      {
+        id: "a",
+        text: "Possibly worse performance, because the extra capacity may be fitting noise in the small dataset.",
+        correct: true,
+      },
+      {
+        id: "b",
+        text: "Better performance, because a more complex model can capture the pattern more precisely.",
+        correct: false,
+        misconceptionId: "of-more-complexity-always-better",
+      },
+      {
+        id: "c",
+        text: "The same performance, because new data comes from the same source.",
+        correct: false,
+      },
+    ],
+  },
+  {
+    id: "of-q3-validation-rising",
+    conceptId: "overfitting",
+    prompt:
+      "During training, the loss on the training set keeps falling, but the loss on a held-out validation set has started to rise. What is the most sensible response?",
+    options: [
+      {
+        id: "a",
+        text: "Keep training, because the validation loss will come back down once the model has learned enough.",
+        correct: false,
+        misconceptionId: "of-confused-with-underfit",
+      },
+      {
+        id: "b",
+        text: "Trust the training loss, because that is the data the model actually learns from.",
+        correct: false,
+        misconceptionId: "of-train-accuracy-proves",
+      },
+      {
+        id: "c",
+        text: "Stop earlier or add regularization, because the model has started fitting the training data too closely.",
+        correct: true,
+      },
+    ],
+  },
+  {
+    id: "of-q4-small-gap",
+    conceptId: "overfitting",
+    prompt: "A model scores 96% on training data and 94% on test data. What is the best reading?",
+    options: [
+      {
+        id: "a",
+        text: "Overfitting, because test accuracy is lower than training accuracy.",
+        correct: false,
+        misconceptionId: "of-any-gap-is-overfit",
+      },
+      {
+        id: "b",
+        text: "Healthy generalization; a small gap between training and test scores is normal.",
+        correct: true,
+      },
+      {
+        id: "c",
+        text: "Underfitting, because neither score is 100%.",
+        correct: false,
+      },
+    ],
+  },
 ];
 
 export function getQuestionsForConcept(
