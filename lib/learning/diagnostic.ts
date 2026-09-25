@@ -489,6 +489,103 @@ export const diagnosticQuestions: DiagnosticQuestion[] = [
       },
     ],
   },
+  {
+    id: "lgr-q1-output",
+    conceptId: "logistic-regression",
+    prompt:
+      "A trained logistic regression model is given a new email. What does the model itself output?",
+    options: [
+      {
+        id: "a",
+        text: "A probability between 0 and 1 that the email is spam; a threshold then turns it into a class.",
+        correct: true,
+      },
+      {
+        id: "b",
+        text: "The class itself, spam or not spam, given directly as a 1 or a 0 with no probability involved.",
+        correct: false,
+        misconceptionId: "lgr-output-is-label",
+      },
+      {
+        id: "c",
+        text: "Any real number, the same way linear regression outputs a price, which is then rounded to a class.",
+        correct: false,
+      },
+    ],
+  },
+  {
+    id: "lgr-q2-boundary",
+    conceptId: "logistic-regression",
+    prompt:
+      "Two classes form a ring in a plot of two features: class A sits inside a circle and class B surrounds it. Logistic regression is fitted on just those two features. What will most likely happen?",
+    options: [
+      {
+        id: "a",
+        text: "It will draw a circular boundary, because the sigmoid is a curve and can bend around the inner class.",
+        correct: false,
+        misconceptionId: "lgr-curved-boundary",
+      },
+      {
+        id: "b",
+        text: "It will separate them poorly, because its decision boundary is a straight line in this feature space.",
+        correct: true,
+      },
+      {
+        id: "c",
+        text: "It will separate them perfectly, because it always finds the best boundary whatever the data look like.",
+        correct: false,
+      },
+    ],
+  },
+  {
+    id: "lgr-q3-threshold",
+    conceptId: "logistic-regression",
+    prompt:
+      "A model screens for a serious disease that affects 1 in 100 patients. Missing a sick patient is far worse than a false alarm. What should you do about the 0.5 threshold?",
+    options: [
+      {
+        id: "a",
+        text: "Keep it at 0.5, because a probability above 0.5 is the only sensible definition of a positive case.",
+        correct: false,
+        misconceptionId: "lgr-threshold-always-half",
+      },
+      {
+        id: "b",
+        text: "There is no threshold to change: the model outputs the class directly, so the only fix is more data.",
+        correct: false,
+        misconceptionId: "lgr-output-is-label",
+      },
+      {
+        id: "c",
+        text: "Consider lowering it so more patients get flagged, accepting extra false alarms to miss fewer sick ones.",
+        correct: true,
+      },
+    ],
+  },
+  {
+    id: "lgr-q4-why-sigmoid",
+    conceptId: "logistic-regression",
+    prompt:
+      "Why not simply fit an ordinary straight line to the 0/1 labels instead of using a sigmoid?",
+    options: [
+      {
+        id: "a",
+        text: "A line can output values below 0 or above 1, which are not valid probabilities; the sigmoid keeps outputs in 0 to 1.",
+        correct: true,
+      },
+      {
+        id: "b",
+        text: "You could: the line would work equally well, and the sigmoid only makes the output look tidier and easier to read.",
+        correct: false,
+        misconceptionId: "lgr-sigmoid-cosmetic",
+      },
+      {
+        id: "c",
+        text: "A straight line cannot be fitted to labels that are only 0 and 1, because fitting needs continuous labels.",
+        correct: false,
+      },
+    ],
+  },
 ];
 
 export function getQuestionsForConcept(
