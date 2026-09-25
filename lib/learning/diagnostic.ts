@@ -20,14 +20,14 @@ export const diagnosticQuestions: DiagnosticQuestion[] = [
       },
       {
         id: "b",
-        text: "Nudges the parameters a small step in the direction that reduces the loss.",
-        correct: true,
-      },
-      {
-        id: "c",
         text: "Adds the gradient to the parameters.",
         correct: false,
         misconceptionId: "gd-gradient-direction",
+      },
+      {
+        id: "c",
+        text: "Nudges the parameters a small step in the direction that reduces the loss.",
+        correct: true,
       },
     ],
   },
@@ -39,14 +39,14 @@ export const diagnosticQuestions: DiagnosticQuestion[] = [
     options: [
       {
         id: "a",
-        text: "Increase w, because the gradient points toward lower loss.",
-        correct: false,
-        misconceptionId: "gd-gradient-direction",
+        text: "Decrease w, because the gradient points toward higher loss.",
+        correct: true,
       },
       {
         id: "b",
-        text: "Decrease w, because the gradient points toward higher loss.",
-        correct: true,
+        text: "Increase w, because the gradient points toward lower loss.",
+        correct: false,
+        misconceptionId: "gd-gradient-direction",
       },
       {
         id: "c",
@@ -69,13 +69,13 @@ export const diagnosticQuestions: DiagnosticQuestion[] = [
       },
       {
         id: "b",
-        text: "The steps are so large they overshoot the minimum and the loss diverges.",
-        correct: true,
+        text: "Gradient descent cannot work with numbers that large.",
+        correct: false,
       },
       {
         id: "c",
-        text: "Gradient descent cannot work with numbers that large.",
-        correct: false,
+        text: "The steps are so large they overshoot the minimum and the loss diverges.",
+        correct: true,
       },
     ],
   },
@@ -87,20 +87,115 @@ export const diagnosticQuestions: DiagnosticQuestion[] = [
     options: [
       {
         id: "a",
-        text: "Yes, gradient descent always finds the global minimum.",
-        correct: false,
-        misconceptionId: "gd-global-minimum",
+        text: "Not necessarily; it may have stalled at a local minimum, saddle point or plateau.",
+        correct: true,
       },
       {
         id: "b",
-        text: "Not necessarily; it may have stalled at a local minimum, saddle point or plateau.",
-        correct: true,
+        text: "Yes, gradient descent always finds the global minimum.",
+        correct: false,
+        misconceptionId: "gd-global-minimum",
       },
       {
         id: "c",
         text: "No, it would keep improving if you used a larger learning rate.",
         correct: false,
         misconceptionId: "gd-bigger-lr-better",
+      },
+    ],
+  },
+  {
+    id: "bp-q1-what-it-computes",
+    conceptId: "backpropagation",
+    prompt: "In one training step, what does backpropagation itself compute?",
+    options: [
+      {
+        id: "a",
+        text: "The new values of the weights after the step.",
+        correct: false,
+        misconceptionId: "bp-updates-weights",
+      },
+      {
+        id: "b",
+        text: "The network's prediction for the input.",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "How much the loss changes with respect to each weight (the gradients).",
+        correct: true,
+      },
+    ],
+  },
+  {
+    id: "bp-q2-who-updates",
+    conceptId: "backpropagation",
+    prompt: "During training, which step is responsible for actually changing the weights?",
+    options: [
+      {
+        id: "a",
+        text: "An optimizer such as gradient descent, which applies an update rule to the weights.",
+        correct: true,
+      },
+      {
+        id: "b",
+        text: "Backpropagation, which rewrites each weight as it passes backward through the network.",
+        correct: false,
+        misconceptionId: "bp-updates-weights",
+      },
+      {
+        id: "c",
+        text: "The forward pass, which adjusts the weights while it computes predictions.",
+        correct: false,
+      },
+    ],
+  },
+  {
+    id: "bp-q3-which-layers",
+    conceptId: "backpropagation",
+    prompt:
+      "A network has an input layer, two hidden layers and an output layer, and the loss is measured at the output. Which weights get a gradient from backpropagation?",
+    options: [
+      {
+        id: "a",
+        text: "Only the output layer's weights, since that is where the loss is measured.",
+        correct: false,
+        misconceptionId: "bp-last-layer-only",
+      },
+      {
+        id: "b",
+        text: "Weights in every layer, because the chain rule carries each weight's effect on the loss back through the network.",
+        correct: true,
+      },
+      {
+        id: "c",
+        text: "Every weight gets the same gradient, since they all share the blame for one loss value.",
+        correct: false,
+        misconceptionId: "bp-same-blame",
+      },
+    ],
+  },
+  {
+    id: "bp-q4-cost",
+    conceptId: "backpropagation",
+    prompt:
+      "A network has 1,000,000 weights. To get the gradient of the loss for every weight on one example, how many passes does backpropagation need?",
+    options: [
+      {
+        id: "a",
+        text: "About one per layer, each pass handling one layer's weights.",
+        correct: false,
+      },
+      {
+        id: "b",
+        text: "About one million, one per weight: nudge the weight, re-run the network and see how the loss changes.",
+        correct: false,
+        misconceptionId: "bp-per-weight-rerun",
+      },
+      {
+        id: "c",
+        text: "One forward pass and one backward pass, which together give every gradient.",
+        correct: true,
       },
     ],
   },
