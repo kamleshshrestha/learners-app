@@ -8,6 +8,7 @@ import type { Diagnosis, Misconception } from "@/lib/learning/types";
 import { generateStructured, llmErrorResponse, parseBody } from "@/lib/llm/client";
 import { checkRateLimit } from "@/lib/llm/rate-limit";
 import { diagnosisPrompt } from "@/lib/llm/prompts";
+import { scrubMisconceptionIds } from "@/lib/llm/scrub";
 import { diagnoseRequestSchema, diagnosisOutputSchema } from "@/lib/llm/schemas";
 
 export async function POST(request: Request) {
@@ -43,7 +44,7 @@ export async function POST(request: Request) {
         .map(getMisconception)
         .filter((m): m is Misconception => m !== undefined),
       evidence: evidenceFor(conceptId, answers, primary.id),
-      reasoning: result.reasoning,
+      reasoning: scrubMisconceptionIds(result.reasoning, misconceptions),
     };
     return Response.json({ diagnosis });
   } catch (error) {

@@ -43,7 +43,8 @@ hooks/
 └── useLearningSession.ts    client-side session state + calls to the API routes
 lib/
 ├── llm/                     client.ts (OpenRouter client, generateStructured, request helpers),
-│                            prompts.ts, schemas.ts (zod request + structured-output schemas)
+│                            prompts.ts, schemas.ts (zod request + structured-output schemas),
+│                            scrub.ts (strips internal misconception ids from learner-facing model text)
 └── learning/                domain logic, no React/LLM dependencies:
                              concepts.ts, misconceptions.ts, diagnostic.ts,
                              session.ts (pure stage transitions), types.ts
@@ -52,7 +53,7 @@ tests/                       mirrors lib/ and components/ (Vitest; `lib/learning
 
 Conventions:
 - LLM calls happen only in `app/api/*` route handlers via `lib/llm/`; components and hooks call the API routes and never import `lib/llm/` (keeps the API key server-side). Types shared with the client live in `lib/learning/types.ts`.
-- LLM calls go to OpenRouter's chat-completions API via `fetch` (no SDK). The model is `OPENROUTER_MODEL` from the environment, defaulting to the free `qwen/qwen3.8-27b:free` (constant `MODEL` in `lib/llm/client.ts`). Free models are often rate limited or overloaded and take ~10-15s per call. Outputs are requested as JSON schema (from the zod schemas), then validated with zod and retried once on invalid output. Learner free text is untrusted: prompts wrap it in `<learner_...>` tags, and routes validate ids against the catalog server-side rather than trusting client-supplied misconception text.
+- LLM calls go to OpenRouter's chat-completions API via `fetch` (no SDK). The model is `OPENROUTER_MODEL` from the environment, defaulting to the free `qwen/qwen3.8-27b:free` (constant `MODEL` in `lib/llm/client.ts`). Free models are often rate limited or overloaded and take ~10-15s per call. Outputs are requested as JSON schema (from the zod schemas), then validated with zod and retried once on invalid output. Model text shown to learners must not expose internal ids: the diagnosis prompt forbids it and `/api/diagnose` also runs `reasoning` through `scrubMisconceptionIds`. Learner free text is untrusted: prompts wrap it in `<learner_...>` tags, and routes validate ids against the catalog server-side rather than trusting client-supplied misconception text.
 - `lib/learning/` stays pure (no React, no LLM) so it is easy to unit test; shared types live in `lib/learning/types.ts`.
 - Secrets go in `.env.local` (gitignored via `.env*`). It must contain `OPENROUTER_API_KEY` and may set `OPENROUTER_MODEL`; restart `pnpm dev` after changing it. Without a key the API routes return a 500 "AI service is not configured" error. The API routes have no auth, but each starts with `checkRateLimit(request)` (`lib/llm/rate-limit.ts`): an in-memory fixed-window limit per client address (`x-forwarded-for`/`x-real-ip`; default 20 requests per 10 min) plus a global cap (default 500 per hour), returning 429 with `Retry-After`. Tune with `RATE_LIMIT_MAX`, `RATE_LIMIT_WINDOW_SECONDS`, `RATE_LIMIT_GLOBAL_MAX`, `RATE_LIMIT_GLOBAL_WINDOW_SECONDS`. Counters are per server instance (reset on restart, not shared across serverless instances) and the address headers are only trustworthy behind a proxy that sets them, so this limits abuse of the API key rather than enforcing exact quotas. New LLM-backed routes must call it first.
 
