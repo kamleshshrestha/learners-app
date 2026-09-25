@@ -392,6 +392,103 @@ export const diagnosticQuestions: DiagnosticQuestion[] = [
       },
     ],
   },
+  {
+    id: "lr-q1-best-fit",
+    conceptId: "linear-regression",
+    prompt:
+      "A scatter plot shows a rough upward trend with some scatter around it. What does the best-fit line from linear regression do?",
+    options: [
+      {
+        id: "a",
+        text: "It should pass through every point, and a line that misses points is simply a poor fit for the data.",
+        correct: false,
+        misconceptionId: "lr-hit-every-point",
+      },
+      {
+        id: "b",
+        text: "It keeps the overall squared distance to the points as small as possible, even if most points miss it.",
+        correct: true,
+      },
+      {
+        id: "c",
+        text: "It passes through the first and last points and takes the average of the ones in between.",
+        correct: false,
+      },
+    ],
+  },
+  {
+    id: "lr-q2-extrapolation",
+    conceptId: "linear-regression",
+    prompt:
+      "A line fitted to house sizes between 50 and 150 m² predicts prices well in that range. A colleague uses it to price a 2,000 m² warehouse. What is the best view?",
+    options: [
+      {
+        id: "a",
+        text: "Fine: the line describes how size relates to price, so the same relationship should hold at any size.",
+        correct: false,
+        misconceptionId: "lr-extrapolate-freely",
+      },
+      {
+        id: "b",
+        text: "Risky, because a linear model can only output prices that it has already seen in the training data.",
+        correct: false,
+      },
+      {
+        id: "c",
+        text: "Risky: it was fitted to sizes from 50 to 150 m², and the relationship may change far outside that range.",
+        correct: true,
+      },
+    ],
+  },
+  {
+    id: "lr-q3-coefficients",
+    conceptId: "linear-regression",
+    prompt:
+      "A model predicts salary from years of experience and from annual sales in dollars. The experience coefficient is 3,000 and the sales coefficient is 0.002. What can you conclude?",
+    options: [
+      {
+        id: "a",
+        text: "Not yet: the coefficients depend on the units, so compare features only after putting them on the same scale.",
+        correct: true,
+      },
+      {
+        id: "b",
+        text: "Experience matters far more than sales, because its coefficient is thousands of times larger than the sales coefficient.",
+        correct: false,
+        misconceptionId: "lr-big-coef-important",
+      },
+      {
+        id: "c",
+        text: "The model must be wrong, because the coefficients for different features should always be about the same size.",
+        correct: false,
+      },
+    ],
+  },
+  {
+    id: "lr-q4-outlier",
+    conceptId: "linear-regression",
+    prompt:
+      "You fit a line to 20 points that follow a clear trend, then add one extra point far above the trend and refit. What happens to the line?",
+    options: [
+      {
+        id: "a",
+        text: "It barely changes, because one point out of 21 has very little say in where the line goes.",
+        correct: false,
+        misconceptionId: "lr-outlier-harmless",
+      },
+      {
+        id: "b",
+        text: "It tilts noticeably toward the extra point, because squared error gives a far-off point a large pull.",
+        correct: true,
+      },
+      {
+        id: "c",
+        text: "It bends so that it passes through the extra point as well, because the fitted line should hit every point.",
+        correct: false,
+        misconceptionId: "lr-hit-every-point",
+      },
+    ],
+  },
 ];
 
 export function getQuestionsForConcept(

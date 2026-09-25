@@ -363,3 +363,46 @@ describe("train/test split content", () => {
     expect(diagnose("train-test-split", answers)?.primary.id).toBe(misconceptionId);
   });
 });
+
+describe("linear regression content", () => {
+  const lrQuestions = getQuestionsForConcept("linear-regression");
+  const pick = (questionId: string, misconceptionId: string) =>
+    lrQuestions
+      .find((q) => q.id === questionId)!
+      .options.find((o) => o.misconceptionId === misconceptionId)!.id;
+  const correct = () =>
+    Object.fromEntries(
+      lrQuestions.map((q) => [q.id, q.options.find((o) => o.correct)!.id]),
+    );
+
+  it("has four questions covering four misconceptions", () => {
+    expect(lrQuestions).toHaveLength(4);
+    expect(getMisconceptionsForConcept("linear-regression")).toHaveLength(4);
+  });
+
+  it("diagnoses nothing when every answer is correct", () => {
+    expect(diagnose("linear-regression", correct())).toBeNull();
+  });
+
+  it("ranks a misconception revealed twice above single-hit ones", () => {
+    const answers = {
+      ...correct(),
+      "lr-q1-best-fit": pick("lr-q1-best-fit", "lr-hit-every-point"),
+      "lr-q4-outlier": pick("lr-q4-outlier", "lr-hit-every-point"),
+      "lr-q3-coefficients": pick("lr-q3-coefficients", "lr-big-coef-important"),
+    };
+    const diagnosis = diagnose("linear-regression", answers)!;
+    expect(diagnosis.primary.id).toBe("lr-hit-every-point");
+    expect(diagnosis.evidence).toEqual(["lr-q1-best-fit", "lr-q4-outlier"]);
+    expect(diagnosis.secondary.map((m) => m.id)).toEqual(["lr-big-coef-important"]);
+  });
+
+  it.each([
+    ["lr-q2-extrapolation", "lr-extrapolate-freely"],
+    ["lr-q3-coefficients", "lr-big-coef-important"],
+    ["lr-q4-outlier", "lr-outlier-harmless"],
+  ])("a wrong answer on %s reveals %s", (questionId, misconceptionId) => {
+    const answers = { ...correct(), [questionId]: pick(questionId, misconceptionId) };
+    expect(diagnose("linear-regression", answers)?.primary.id).toBe(misconceptionId);
+  });
+});
