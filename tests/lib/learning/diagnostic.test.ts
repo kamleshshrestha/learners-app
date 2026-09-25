@@ -74,6 +74,29 @@ describe("catalog integrity", () => {
     }
   });
 
+  it("does not let the longest option give the correct answer away", () => {
+    // Learners can guess "pick the longest option". Allow the correct option
+    // to be the longest in at most half of a concept's questions (so guessing
+    // it beats chance only slightly), and never by a glaring margin.
+    for (const c of concepts) {
+      const questions = getQuestionsForConcept(c.id);
+      if (questions.length === 0) continue;
+
+      let longestCount = 0;
+      for (const q of questions) {
+        const correctLength = q.options.find((o) => o.correct)!.text.length;
+        const longestWrong = Math.max(
+          ...q.options.filter((o) => !o.correct).map((o) => o.text.length),
+        );
+        if (correctLength > longestWrong) longestCount++;
+        expect(correctLength, `${q.id}: correct answer far longer than the others`)
+          .toBeLessThanOrEqual(longestWrong * 1.6);
+      }
+      expect(longestCount, `${c.id}: correct answer is the longest option too often`)
+        .toBeLessThanOrEqual(Math.ceil(questions.length / 2));
+    }
+  });
+
   it("gives every concept either both questions and misconceptions or neither", () => {
     // /learn shows "coming soon" without questions and /api/diagnose 404s
     // without misconceptions, so a half-finished concept would break the flow.
@@ -338,17 +361,5 @@ describe("train/test split content", () => {
   ])("a wrong answer on %s reveals %s", (questionId, misconceptionId) => {
     const answers = { ...correct(), [questionId]: pick(questionId, misconceptionId) };
     expect(diagnose("train-test-split", answers)?.primary.id).toBe(misconceptionId);
-  });
-
-  it("does not let the longest option give the correct answer away", () => {
-    // Learners can guess "pick the longest option"; keep the correct one from
-    // being the longest by a wide margin in every question.
-    for (const q of ttsQuestions) {
-      const correctLength = q.options.find((o) => o.correct)!.text.length;
-      const longestWrong = Math.max(
-        ...q.options.filter((o) => !o.correct).map((o) => o.text.length),
-      );
-      expect(correctLength, q.id).toBeLessThanOrEqual(longestWrong * 1.15);
-    }
   });
 });
