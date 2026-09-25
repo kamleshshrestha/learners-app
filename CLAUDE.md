@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Learning Debugger — a web app that helps beginner machine-learning learners identify *specifically* what they misunderstand about a concept, rather than giving them another generic explanation.
 
-The core learner flow is implemented end to end for two concepts (gradient descent and backpropagation); the other concepts show a "coming soon" state until they have questions and misconceptions in `lib/learning/`. Unit tests run with Vitest.
+The core learner flow is implemented end to end for three concepts (gradient descent, backpropagation and overfitting); the other concepts show a "coming soon" state until they have questions and misconceptions in `lib/learning/`. Unit tests run with Vitest.
 
 Learner flow: pick a concept (`/`) → 4 multiple-choice diagnostic questions → explain the concept in your own words (free text) → LLM diagnosis of the specific misconception → targeted explanation → LLM-graded verification question.
 

@@ -71,6 +71,42 @@ export const misconceptions: Misconception[] = [
     correction:
       "That is numerical differentiation, and it would be far too slow for millions of weights. Backpropagation reuses values saved during the forward pass and applies the chain rule, so one backward pass gives every gradient at roughly the cost of the forward pass.",
   },
+  {
+    id: "of-train-accuracy-proves",
+    conceptId: "overfitting",
+    title: "Thinks high training accuracy means a good model",
+    belief:
+      "If a model scores very well on its training data, it has learned the task well.",
+    correction:
+      "A model can reach near-perfect training accuracy by memorizing the training examples, noise included. Only performance on data it has not seen shows whether it generalizes.",
+  },
+  {
+    id: "of-more-complexity-always-better",
+    conceptId: "overfitting",
+    title: "Thinks a more complex model is always better",
+    belief:
+      "More parameters means more power, so a bigger model will always do better on new data too.",
+    correction:
+      "Extra capacity lets a model fit the noise in a limited dataset, which usually makes it worse on new data. The right complexity depends on how much data you have and how noisy it is.",
+  },
+  {
+    id: "of-confused-with-underfit",
+    conceptId: "overfitting",
+    title: "Confuses overfitting with underfitting",
+    belief:
+      "If a model does badly on new data, it just has not learned enough yet, so it needs more training.",
+    correction:
+      "Underfitting is doing badly everywhere because the model has not captured the pattern. Overfitting is doing well on training data but badly on new data, and training longer on the same data usually makes it worse, not better.",
+  },
+  {
+    id: "of-any-gap-is-overfit",
+    conceptId: "overfitting",
+    title: "Thinks any train-test gap means overfitting",
+    belief:
+      "If test accuracy is lower than training accuracy at all, the model is overfitting.",
+    correction:
+      "Some gap is normal, because a model always fits the data it trained on slightly better. Overfitting is a large gap, or test performance getting worse while training performance keeps improving.",
+  },
 ];
 
 export function getMisconception(id: string): Misconception | undefined {
