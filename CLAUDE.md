@@ -20,7 +20,7 @@ Package manager is pnpm (`packageManager: pnpm@10.33.0` in package.json).
 - `pnpm build` — production build
 - `pnpm start` — run the production build
 - `pnpm lint` — run ESLint (flat config in `eslint.config.mjs`, extends `eslint-config-next`'s core-web-vitals and typescript rule sets)
-- `pnpm test` — run the Vitest unit tests once (`pnpm test:watch` to watch). Config is `vitest.config.mts`; tests live in `tests/**/*.test.ts` and use the `@/` alias. Only `lib/learning/` is covered so far.
+- `pnpm test` — run the Vitest unit tests once (`pnpm test:watch` to watch). Config is `vitest.config.mts`; tests live in `tests/**/*.test.ts` and use the `@/` alias. Covered so far: `lib/learning/` and `lib/llm/client.ts` (fetch is stubbed with `vi.stubGlobal`, backoff via fake timers).
 
 ## Architecture
 
@@ -47,7 +47,7 @@ lib/
 └── learning/                domain logic, no React/LLM dependencies:
                              concepts.ts, misconceptions.ts, diagnostic.ts,
                              session.ts (pure stage transitions), types.ts
-tests/                       mirrors lib/ and components/ (Vitest; `lib/learning/` covered, `lib/llm/` and components not yet)
+tests/                       mirrors lib/ and components/ (Vitest; `lib/learning/` and `lib/llm/client.ts` covered, prompts/schemas/components not yet)
 ```
 
 Conventions:
