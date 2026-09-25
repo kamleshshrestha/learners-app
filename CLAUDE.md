@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Learning Debugger — a web app that helps beginner machine-learning learners identify *specifically* what they misunderstand about a concept, rather than giving them another generic explanation.
 
-The core learner flow is implemented end to end for one concept (gradient descent); the other concepts show a "coming soon" state. There is no test runner yet.
+The core learner flow is implemented end to end for one concept (gradient descent); the other concepts show a "coming soon" state. Unit tests run with Vitest.
 
 Learner flow: pick a concept (`/`) → 4 multiple-choice diagnostic questions → explain the concept in your own words (free text) → LLM diagnosis of the specific misconception → targeted explanation → LLM-graded verification question.
 
@@ -20,8 +20,7 @@ Package manager is pnpm (`packageManager: pnpm@10.33.0` in package.json).
 - `pnpm build` — production build
 - `pnpm start` — run the production build
 - `pnpm lint` — run ESLint (flat config in `eslint.config.mjs`, extends `eslint-config-next`'s core-web-vitals and typescript rule sets)
-
-There is no test setup in this repo yet.
+- `pnpm test` — run the Vitest unit tests once (`pnpm test:watch` to watch). Config is `vitest.config.mts`; tests live in `tests/**/*.test.ts` and use the `@/` alias. Only `lib/learning/` is covered so far.
 
 ## Architecture
 
@@ -48,7 +47,7 @@ lib/
 └── learning/                domain logic, no React/LLM dependencies:
                              concepts.ts, misconceptions.ts, diagnostic.ts,
                              session.ts (pure stage transitions), types.ts
-tests/                       mirrors lib/ and components/ (no test runner configured yet)
+tests/                       mirrors lib/ and components/ (Vitest; `lib/learning/` covered, `lib/llm/` and components not yet)
 ```
 
 Conventions:
