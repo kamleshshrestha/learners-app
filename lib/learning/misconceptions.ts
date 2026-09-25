@@ -143,6 +143,41 @@ export const misconceptions: Misconception[] = [
     correction:
       "The split has to match how the model will be used. With time-ordered data a random split lets the model train on the future, so split by time. Rows from the same person or group should stay together, and rare classes may need a stratified split.",
   },
+  {
+    id: "lr-hit-every-point",
+    conceptId: "linear-regression",
+    title: "Thinks the line should pass through every point",
+    belief:
+      "A good best-fit line goes through all the data points, and one that misses points is a poor fit.",
+    correction:
+      "Real data is noisy, so a straight line cannot hit every point. Linear regression picks the line that makes the overall squared error as small as possible, which usually leaves most points slightly off the line.",
+  },
+  {
+    id: "lr-extrapolate-freely",
+    conceptId: "linear-regression",
+    title: "Thinks the line holds far outside the data",
+    belief:
+      "Once a line fits the data well, its predictions are just as reliable for any input, however far away.",
+    correction:
+      "The line only describes the relationship where there was data. Far outside that range the true relationship may bend, level off or change entirely, so predictions there (extrapolation) are much less trustworthy.",
+  },
+  {
+    id: "lr-big-coef-important",
+    conceptId: "linear-regression",
+    title: "Thinks a bigger coefficient always means a more important feature",
+    belief: "The feature with the larger coefficient matters more to the prediction.",
+    correction:
+      "A coefficient depends on the units of its feature: a feature measured in small units needs a large coefficient to have the same effect. To compare importance, put the features on the same scale first, for example by standardizing them.",
+  },
+  {
+    id: "lr-outlier-harmless",
+    conceptId: "linear-regression",
+    title: "Thinks one outlier barely affects the line",
+    belief:
+      "With enough points, a single unusual point has little say in where the line goes.",
+    correction:
+      "Least squares squares each error, so a point far from the trend contributes a very large error and pulls the line toward it. One outlier can noticeably tilt the line, especially when there are few points.",
+  },
 ];
 
 export function getMisconception(id: string): Misconception | undefined {
