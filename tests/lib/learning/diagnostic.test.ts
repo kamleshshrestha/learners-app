@@ -406,3 +406,46 @@ describe("linear regression content", () => {
     expect(diagnose("linear-regression", answers)?.primary.id).toBe(misconceptionId);
   });
 });
+
+describe("logistic regression content", () => {
+  const lgrQuestions = getQuestionsForConcept("logistic-regression");
+  const pick = (questionId: string, misconceptionId: string) =>
+    lgrQuestions
+      .find((q) => q.id === questionId)!
+      .options.find((o) => o.misconceptionId === misconceptionId)!.id;
+  const correct = () =>
+    Object.fromEntries(
+      lgrQuestions.map((q) => [q.id, q.options.find((o) => o.correct)!.id]),
+    );
+
+  it("has four questions covering four misconceptions", () => {
+    expect(lgrQuestions).toHaveLength(4);
+    expect(getMisconceptionsForConcept("logistic-regression")).toHaveLength(4);
+  });
+
+  it("diagnoses nothing when every answer is correct", () => {
+    expect(diagnose("logistic-regression", correct())).toBeNull();
+  });
+
+  it("ranks a misconception revealed twice above single-hit ones", () => {
+    const answers = {
+      ...correct(),
+      "lgr-q1-output": pick("lgr-q1-output", "lgr-output-is-label"),
+      "lgr-q3-threshold": pick("lgr-q3-threshold", "lgr-output-is-label"),
+      "lgr-q2-boundary": pick("lgr-q2-boundary", "lgr-curved-boundary"),
+    };
+    const diagnosis = diagnose("logistic-regression", answers)!;
+    expect(diagnosis.primary.id).toBe("lgr-output-is-label");
+    expect(diagnosis.evidence).toEqual(["lgr-q1-output", "lgr-q3-threshold"]);
+    expect(diagnosis.secondary.map((m) => m.id)).toEqual(["lgr-curved-boundary"]);
+  });
+
+  it.each([
+    ["lgr-q2-boundary", "lgr-curved-boundary"],
+    ["lgr-q3-threshold", "lgr-threshold-always-half"],
+    ["lgr-q4-why-sigmoid", "lgr-sigmoid-cosmetic"],
+  ])("a wrong answer on %s reveals %s", (questionId, misconceptionId) => {
+    const answers = { ...correct(), [questionId]: pick(questionId, misconceptionId) };
+    expect(diagnose("logistic-regression", answers)?.primary.id).toBe(misconceptionId);
+  });
+});

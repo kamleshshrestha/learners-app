@@ -178,6 +178,42 @@ export const misconceptions: Misconception[] = [
     correction:
       "Least squares squares each error, so a point far from the trend contributes a very large error and pulls the line toward it. One outlier can noticeably tilt the line, especially when there are few points.",
   },
+  {
+    id: "lgr-output-is-label",
+    conceptId: "logistic-regression",
+    title: "Thinks it outputs the class directly",
+    belief:
+      "Logistic regression outputs a 0 or a 1, so the number it produces is the predicted class.",
+    correction:
+      "The model outputs a probability between 0 and 1. A class is only chosen afterwards, by comparing that probability with a threshold.",
+  },
+  {
+    id: "lgr-curved-boundary",
+    conceptId: "logistic-regression",
+    title: "Thinks the sigmoid makes the decision boundary curved",
+    belief:
+      "Because the sigmoid is an S-shaped curve, logistic regression separates classes with a curved boundary.",
+    correction:
+      "The sigmoid only squashes a linear score into a probability. The decision boundary is where that score is zero, which is a straight line (or flat plane) in the feature space, so classes that need a curved boundary cannot be separated without extra features.",
+  },
+  {
+    id: "lgr-threshold-always-half",
+    conceptId: "logistic-regression",
+    title: "Thinks 0.5 is the only sensible threshold",
+    belief:
+      "A case is positive when its probability is above 0.5, and that cutoff should never change.",
+    correction:
+      "0.5 is only a default. When one kind of mistake costs more, or when a class is rare, you can move the threshold to trade false positives against false negatives.",
+  },
+  {
+    id: "lgr-sigmoid-cosmetic",
+    conceptId: "logistic-regression",
+    title: "Thinks the sigmoid is only cosmetic",
+    belief:
+      "Fitting a straight line to 0/1 labels would work just as well, and the sigmoid only tidies up the output.",
+    correction:
+      "A straight line can predict values below 0 or above 1, which are not valid probabilities, and it is thrown off by extreme points. The sigmoid keeps outputs between 0 and 1 and lets the model be trained with a loss designed for probabilities.",
+  },
 ];
 
 export function getMisconception(id: string): Misconception | undefined {
