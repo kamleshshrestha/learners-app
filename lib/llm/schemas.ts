@@ -47,5 +47,12 @@ export const explanationOutputSchema = z.object({
 
 export const verificationOutputSchema = z.object({
   verdict: z.enum(["resolved", "partial", "unresolved"]),
-  feedback: z.string(),
+  // A refine rather than min(): it stays out of the JSON schema sent to the
+  // provider, and its message is what the model sees when it is asked again.
+  feedback: z
+    .string()
+    .refine((text) => text.trim().length >= 20, {
+      message:
+        "feedback must be two or three full sentences for the learner, not just the verdict word",
+    }),
 });

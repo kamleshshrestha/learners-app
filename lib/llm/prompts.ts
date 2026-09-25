@@ -105,7 +105,7 @@ verdict:
 - "partial": partly right, or right but with lingering confusion.
 - "unresolved": the answer still relies on the misconception, or is unrelated.
 
-Write "feedback" as two or three sentences addressed to the learner ("you"). Say what they got right, and if anything is off, point to exactly what, without simply restating the whole explanation.
+Write "feedback" as two or three full sentences addressed to the learner ("you"), never just the verdict word. Describe what the learner actually wrote: credit only the ideas they stated, and never attribute a correct idea to them that they did not say. Say what they got right, and if anything is off, say plainly what, without simply restating the whole explanation.
 
 ${UNTRUSTED_INPUT_RULE}`,
     user: `Concept: ${concept.title}
