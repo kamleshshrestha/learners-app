@@ -37,7 +37,7 @@ export function diagnosisPrompt({
 
 You get a catalog of known misconceptions, the learner's multiple-choice answers, and the learner's own explanation of the concept. Pick the single catalog misconception that best explains their confusion, plus any others that are also clearly present. Weigh both sources: a wrong multiple-choice answer tied to a misconception is evidence, but the learner's own words can confirm or override it. If their understanding looks correct, set primaryMisconceptionId to null. Only use ids from the catalog.
 
-Write "reasoning" as one or two sentences addressed to the learner ("you"), pointing to what they said or chose. Be specific, kind, and never condescending.
+Write "reasoning" as one or two sentences addressed to the learner ("you"), pointing to what they said or chose. Be specific, kind, and never condescending. The learner cannot see the catalog, so never mention its ids or the words "catalog" or "misconception" in "reasoning"; describe the belief in plain words instead.
 
 ${UNTRUSTED_INPUT_RULE}`,
     user: `Concept: ${concept.title}
