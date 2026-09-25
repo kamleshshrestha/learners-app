@@ -297,3 +297,58 @@ describe("overfitting content", () => {
     expect(diagnose("overfitting", answers)?.primary.id).toBe(misconceptionId);
   });
 });
+
+describe("train/test split content", () => {
+  const ttsQuestions = getQuestionsForConcept("train-test-split");
+  const pick = (questionId: string, misconceptionId: string) =>
+    ttsQuestions
+      .find((q) => q.id === questionId)!
+      .options.find((o) => o.misconceptionId === misconceptionId)!.id;
+  const correct = () =>
+    Object.fromEntries(
+      ttsQuestions.map((q) => [q.id, q.options.find((o) => o.correct)!.id]),
+    );
+
+  it("has four questions covering four misconceptions", () => {
+    expect(ttsQuestions).toHaveLength(4);
+    expect(getMisconceptionsForConcept("train-test-split")).toHaveLength(4);
+  });
+
+  it("diagnoses nothing when every answer is correct", () => {
+    expect(diagnose("train-test-split", correct())).toBeNull();
+  });
+
+  it("ranks a misconception revealed twice above single-hit ones", () => {
+    const answers = {
+      ...correct(),
+      "tts-q1-why-holdout": pick("tts-q1-why-holdout", "tts-waste-of-data"),
+      "tts-q2-tuning": pick("tts-q2-tuning", "tts-waste-of-data"),
+      "tts-q3-scaling": pick("tts-q3-scaling", "tts-preprocess-before-split"),
+    };
+    const diagnosis = diagnose("train-test-split", answers)!;
+    expect(diagnosis.primary.id).toBe("tts-waste-of-data");
+    expect(diagnosis.evidence).toEqual(["tts-q1-why-holdout", "tts-q2-tuning"]);
+    expect(diagnosis.secondary.map((m) => m.id)).toEqual(["tts-preprocess-before-split"]);
+  });
+
+  it.each([
+    ["tts-q2-tuning", "tts-tune-on-test"],
+    ["tts-q3-scaling", "tts-preprocess-before-split"],
+    ["tts-q4-time-order", "tts-random-always-fine"],
+  ])("a wrong answer on %s reveals %s", (questionId, misconceptionId) => {
+    const answers = { ...correct(), [questionId]: pick(questionId, misconceptionId) };
+    expect(diagnose("train-test-split", answers)?.primary.id).toBe(misconceptionId);
+  });
+
+  it("does not let the longest option give the correct answer away", () => {
+    // Learners can guess "pick the longest option"; keep the correct one from
+    // being the longest by a wide margin in every question.
+    for (const q of ttsQuestions) {
+      const correctLength = q.options.find((o) => o.correct)!.text.length;
+      const longestWrong = Math.max(
+        ...q.options.filter((o) => !o.correct).map((o) => o.text.length),
+      );
+      expect(correctLength, q.id).toBeLessThanOrEqual(longestWrong * 1.15);
+    }
+  });
+});

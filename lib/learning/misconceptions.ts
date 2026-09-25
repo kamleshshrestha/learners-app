@@ -107,6 +107,42 @@ export const misconceptions: Misconception[] = [
     correction:
       "Some gap is normal, because a model always fits the data it trained on slightly better. Overfitting is a large gap, or test performance getting worse while training performance keeps improving.",
   },
+  {
+    id: "tts-waste-of-data",
+    conceptId: "train-test-split",
+    title: "Thinks holding data back is a waste",
+    belief:
+      "A model's training score already shows how good it is, and setting data aside only gives it less to learn from.",
+    correction:
+      "A model's score on data it trained on is optimistic, so it cannot show how the model will do on new data. Held-out data is what lets you measure that. Once you have your estimate, you can retrain on all the data if you want.",
+  },
+  {
+    id: "tts-tune-on-test",
+    conceptId: "train-test-split",
+    title: "Thinks it's fine to tune on the test set",
+    belief:
+      "You can check and adjust against the test set as often as you like, since the model was never trained on it.",
+    correction:
+      "Each time you pick a setting because it scored better on the test set, the test set influences the model and the final score becomes optimistic. Tune on a separate validation set (or with cross-validation) and use the test set once, at the end.",
+  },
+  {
+    id: "tts-preprocess-before-split",
+    conceptId: "train-test-split",
+    title: "Thinks preprocessing can use all the data before splitting",
+    belief:
+      "Scaling or filling in missing values using the whole dataset is harmless, as long as you split afterwards.",
+    correction:
+      "Statistics such as the mean or standard deviation computed from all rows include the test rows, so information about the test set leaks into training. Fit preprocessing on the training set only, then apply it to the test set.",
+  },
+  {
+    id: "tts-random-always-fine",
+    conceptId: "train-test-split",
+    title: "Thinks a random split is always the right split",
+    belief:
+      "Shuffling the rows and splitting them randomly gives a fair test set for any dataset.",
+    correction:
+      "The split has to match how the model will be used. With time-ordered data a random split lets the model train on the future, so split by time. Rows from the same person or group should stay together, and rare classes may need a stratified split.",
+  },
 ];
 
 export function getMisconception(id: string): Misconception | undefined {
