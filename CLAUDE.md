@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Learning Debugger — a web app that helps beginner machine-learning learners identify *specifically* what they misunderstand about a concept, rather than giving them another generic explanation.
+Kapi (formerly Learning Debugger; the repo keeps the name `learners-app`) — a web app that helps beginner machine-learning learners identify *specifically* what they misunderstand about a concept, rather than giving them another generic explanation.
 
 The core learner flow is implemented end to end for all six catalog concepts (gradient descent, backpropagation, overfitting, train/test split, linear regression and logistic regression). A concept added to `lib/learning/concepts.ts` without questions and misconceptions in `lib/learning/` shows a "coming soon" state on `/learn`. Unit tests run with Vitest.
 

@@ -8,7 +8,7 @@ export default function ConceptSelector({ concepts }: { concepts: Concept[] }) {
         <li key={concept.id}>
           <Link
             href={`/learn?concept=${concept.id}`}
-            className="group flex h-full flex-col gap-1 rounded-xl border border-foreground/10 p-5 transition-colors hover:border-foreground/40 hover:bg-foreground/[.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+            className="group flex h-full flex-col gap-1 rounded-xl border border-foreground/10 p-5 transition-colors hover:border-primary/40 hover:bg-primary/[.03] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <span className="flex items-center justify-between font-medium">
               {concept.title}

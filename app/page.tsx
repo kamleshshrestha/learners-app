@@ -1,3 +1,4 @@
+import Image from "next/image";
 import ConceptSelector from "@/components/ConceptSelector";
 import { concepts } from "@/lib/learning/concepts";
 
@@ -5,7 +6,21 @@ export default function Home() {
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-12 px-6 py-16 sm:py-24">
       <header className="flex flex-col gap-4">
-        <p className="font-mono text-sm text-foreground/60">Learning Debugger</p>
+        <Image
+          src="/brand/kapi-logo.png"
+          alt="Kapi"
+          width={604}
+          height={176}
+          preload
+          className="h-10 w-auto self-start dark:hidden"
+        />
+        <Image
+          src="/brand/kapi-logo-light.png"
+          alt="Kapi"
+          width={604}
+          height={176}
+          className="hidden h-10 w-auto self-start dark:block"
+        />
         <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
           Find out what you actually misunderstand.
         </h1>

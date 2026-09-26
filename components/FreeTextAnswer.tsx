@@ -41,7 +41,7 @@ export default function FreeTextAnswer({
         maxLength={MAX_LENGTH}
         rows={6}
         disabled={pending}
-        className="w-full resize-y rounded-xl border border-foreground/20 bg-transparent p-4 leading-7 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground disabled:opacity-60"
+        className="w-full resize-y rounded-xl border border-foreground/20 bg-transparent p-4 leading-7 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60"
       />
       {error && (
         <p role="alert" className="text-red-600 dark:text-red-400">
@@ -51,7 +51,7 @@ export default function FreeTextAnswer({
       <button
         type="submit"
         disabled={!trimmed || pending}
-        className="h-12 self-start rounded-full bg-foreground px-6 font-medium text-background transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+        className="h-12 self-start rounded-full bg-primary px-6 font-medium text-primary-foreground transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
       >
         {pending ? "Thinking…" : submitLabel}
       </button>

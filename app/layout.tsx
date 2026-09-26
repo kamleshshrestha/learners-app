@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Learning Debugger",
+  title: "Kapi",
   description:
     "Pinpoint what you specifically misunderstand about a machine-learning concept.",
 };
