@@ -18,7 +18,7 @@ export default function AnswerInput({
       {options.map((option) => (
         <label
           key={option.id}
-          className="flex cursor-pointer items-start gap-3 rounded-xl border border-foreground/10 p-4 transition-colors hover:border-foreground/40 has-checked:border-foreground has-checked:bg-foreground/[.04] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-foreground"
+          className="flex cursor-pointer items-start gap-3 rounded-xl border border-foreground/10 p-4 transition-colors hover:border-primary/40 has-checked:border-primary has-checked:bg-primary/[.04] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary"
         >
           <input
             type="radio"
@@ -26,7 +26,7 @@ export default function AnswerInput({
             value={option.id}
             checked={value === option.id}
             onChange={() => onChange(option.id)}
-            className="mt-1 accent-foreground"
+            className="mt-1 accent-primary"
           />
           <span className="leading-6">{option.text}</span>
         </label>

@@ -1,6 +1,6 @@
-# Learning Debugger
+# Kapi
 
-Learning Debugger is a small web app for beginner machine-learning learners.
+Kapi is a small web app for beginner machine-learning learners.
 
 Instead of handing out another generic explanation when a concept doesn't click, it helps learners pinpoint *specifically* what they're misunderstanding — so they can fix the actual gap instead of re-reading the same material.
 

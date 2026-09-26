@@ -37,7 +37,7 @@ export default function DiagnosticQuestion({
       <button
         type="submit"
         disabled={!selected}
-        className="h-12 self-start rounded-full bg-foreground px-6 font-medium text-background transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+        className="h-12 self-start rounded-full bg-primary px-6 font-medium text-primary-foreground transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
       >
         {isLast ? "See diagnosis" : "Next question"}
       </button>

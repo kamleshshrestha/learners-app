@@ -18,10 +18,10 @@ export default function SessionProgress({
         aria-valuemax={total}
         aria-valuenow={current}
         aria-label="Diagnostic progress"
-        className="h-1.5 overflow-hidden rounded-full bg-foreground/10"
+        className="h-1.5 overflow-hidden rounded-full bg-primary/10"
       >
         <div
-          className="h-full rounded-full bg-foreground transition-[width]"
+          className="h-full rounded-full bg-primary transition-[width]"
           style={{ width: `${(current / total) * 100}%` }}
         />
       </div>
